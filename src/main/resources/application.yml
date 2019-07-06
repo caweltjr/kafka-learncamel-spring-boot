@@ -1,0 +1,125 @@
+spring:
+  profiles:
+    active: dev
+camel:
+  springboot:
+    shutdownTimeout: 1
+    health.indicator.enabled: true
+management.security.enabled: false
+
+info.app.name: Spring boiler plate
+info.app.description: This is a Spring boot boiler plate code.
+info.app.version: 1.0.0
+
+---
+
+spring:
+  profiles: mock
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 
+    password: 
+    properties.mail.smtp.auth:  true
+    properties.mail.smtp.starttls.enable: true
+
+mail.smtp.starttls.enable: true
+
+mailto: 
+mailFrom: 
+
+message:   Hello from MOCK Profile
+fromRoute: direct:input
+toRoute: mock:output
+healthRoute: direct:health
+errorRoute: mock:output1
+selectNode: mock:output2
+
+---
+
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 
+    password: 
+    properties.mail.smtp.auth:  true
+    properties.mail.smtp.starttls.enable: true
+
+mailto: 
+mailFrom: 
+message:   Hello from DEV Profile
+fromRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=1
+toRoute:  jdbc:dataSource
+healthRoute: timer:health?period=10s
+errorRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:select * from items where sku = :#skuid?dataSource=#dataSource
+---
+
+spring:
+  profiles: stage
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 
+    password: 
+    properties.mail.smtp.auth:  true
+    properties.mail.smtp.starttls.enable: true
+
+mailto: 
+mailFrom: 
+message:    Hello from STAGE Profile
+
+fromRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=1
+toRoute:  jdbc:dataSource
+healthRoute: timer:health?period=10s
+errorRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:select * from items where sku = :#skuid?dataSource=#dataSource
+
+
+---
+
+spring:
+  profiles: prod
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/localDB
+    username: postgres
+    password: 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 
+    password: 
+    properties.mail.smtp.auth:  true
+    properties.mail.smtp.starttls.enable: true
+
+mailto: 
+mailFrom: 
+
+message:    Hello from PROD Profile
+
+fromRoute: kafka:inputItemTopic?brokers=localhost:9092&groupId=itemDev&autoOffsetReset=earliest&consumersCount=1
+toRoute:  jdbc:dataSource
+healthRoute: timer:health?period=10s
+errorRoute: kafka:errorTopic?brokers=localhost:9092
+selectNode: sql:select * from items where sku = :#skuid?dataSource=#dataSource
+
+
+---
